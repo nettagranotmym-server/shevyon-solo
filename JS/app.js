@@ -41,7 +41,8 @@ function startGame() {
     timer: null,
     timeLeft: TIMER_SEC,
     phase: "alloc",
-    touchedThisYear: false
+    touchedThisYear: false,
+    isPractice: true  // מתחילות בניסיון
   };
 
   show("scrGame");
@@ -86,9 +87,10 @@ function showAllocScreen() {
 
   const isIntro = S.year === -1;
   const yr = isIntro ? null : YEARS[S.year];
+  const isPractice = S.isPractice && !isIntro;
 
-  document.getElementById("gStep").textContent = isIntro ? "בניית התיק" : `שנה ${S.year + 1} מתוך 5`;
-  document.getElementById("gTitle").textContent = isIntro ? `${INTRO.icon} ${INTRO.title}` : `${yr.icon} ${yr.year}`;
+  document.getElementById("gStep").textContent = isIntro ? "בניית התיק" : isPractice ? "🎯 שנת ניסיון" : `שנה ${S.year + 1} מתוך 5`;
+  document.getElementById("gTitle").textContent = isIntro ? `${INTRO.icon} ${INTRO.title}` : isPractice ? "🎯 שנת ניסיון — 2020" : `${yr.icon} ${yr.year}`;
 
   let html = "";
 
@@ -282,8 +284,26 @@ function showYearResult(yr, details, oldTotal, commission) {
     </div>`;
   }
 
-  let html = `<div class="yrc">
-    <div class="yr-title">סיכום שנה בתיק ההשקעות שלך</div>
+  // שנת ניסיון — מסך פשוט
+  if (S.isPractice) {
+    let html = `<div class="yrc">
+      <div class="yr-title">סיכום שנת הניסיון</div>
+      <div class="yr-ch ${isPos ? "pos" : "neg"}" style="font-size:26px; margin-bottom:6px;">${isPos ? "+" : ""}${change.toFixed(1)}%</div>
+      ${commissionHtml}
+      <div class="yr-ex" style="padding:8px 10px; margin-bottom:8px; text-align:center;">
+        🎉 כל הכבוד! הבנת איך לתפעל את המשחק.<br><br>
+        <strong>עכשיו מתחילות לשחק באמת!</strong>
+      </div>
+      <div class="yr-bal" style="padding:8px; margin-bottom:8px;">
+        <div class="yr-bl">שווי תיק הניסיון</div>
+        <div class="yr-bv">${fmt(S.total)}</div>
+      </div>
+      <button class="nbtn" id="nextBtn">מתחילות! 🚀</button>
+    </div>`;
+    document.getElementById("gContent").innerHTML = html;
+    document.getElementById("nextBtn").addEventListener("click", startRealGame);
+    return;
+  }
     <div class="yr-ch ${isPos ? "pos" : "neg"}" style="font-size:26px; margin-bottom:6px;">${isPos ? "+" : ""}${change.toFixed(1)}%</div>
     ${commissionHtml}
     <div class="yr-ex" style="padding:8px 10px; margin-bottom:8px;">${yr.lesson.replace(/\n/g, "<br>")}</div>
@@ -314,6 +334,22 @@ function showYearResult(yr, details, oldTotal, commission) {
 
   document.getElementById("gContent").innerHTML = html;
   document.getElementById("nextBtn").addEventListener("click", nextYear);
+}
+
+// ===== START REAL GAME AFTER PRACTICE =====
+function startRealGame() {
+  S.isPractice = false;
+  S.alloc = { bond: 25, cloud: 25, medi: 25, shield: 25 };
+  S.prevAlloc = null;
+  S.portfolio = { bond: 25000, cloud: 25000, medi: 25000, shield: 25000 };
+  S.total = TOTAL;
+  S.year = -1;
+  S.changes = 0;
+  S.totalCommissions = 0;
+  S.yearHistory = [];
+  S.touchedThisYear = false;
+  document.getElementById("gBal").textContent = fmt(S.total);
+  showAllocScreen();
 }
 
 // ===== NEXT YEAR =====
