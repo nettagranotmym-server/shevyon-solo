@@ -253,13 +253,6 @@ function showYearResult(yr, details, oldTotal, commission) {
 
   document.getElementById("gBal").textContent = fmt(S.total);
 
-  let commissionHtml = "";
-  if (commission > 0) {
-    commissionHtml = `<div style="background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.3); border-radius:8px; padding:8px; margin-bottom:8px; text-align:center; font-size:12px;">
-      <span style="color:var(--red)">💸 עמלות: <strong>-${fmt(commission)}</strong></span>
-    </div>`;
-  }
-
   // שנת ניסיון — מסך פשוט
   if (S.isPractice) {
     document.getElementById("gContent").innerHTML = `<div class="yrc">
@@ -283,8 +276,8 @@ function showYearResult(yr, details, oldTotal, commission) {
   // משחק אמיתי
   let html = `<div class="yrc">
     <div class="yr-title">סיכום שנה בתיק ההשקעות שלך</div>
-    <div class="yr-ch ${isPos ? "pos" : "neg"}" style="font-size:26px; margin-bottom:6px;">${isPos ? "+" : ""}${change.toFixed(1)}%</div>
-    ${commissionHtml}
+    <div class="yr-ch ${isPos ? "pos" : "neg"}" style="font-size:26px; margin-bottom:2px;">${isPos ? "+" : ""}${change.toFixed(1)}%</div>
+    ${commission > 0 ? `<div style="font-size:12px; color:var(--red); text-align:center; margin-bottom:6px;">💸 עמלה: -${fmt(commission)}</div>` : ""}
     <div class="yr-ex" style="padding:8px 10px; margin-bottom:8px;">${yr.lesson.replace(/\n/g, "<br>")}</div>
     <div class="yr-bd" style="margin-bottom:8px;">
   `;
