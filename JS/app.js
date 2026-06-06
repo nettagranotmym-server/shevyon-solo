@@ -4,14 +4,14 @@ let S = {
   prevAlloc: null,
   portfolio: { bond: 25000, cloud: 25000, medi: 25000, shield: 25000 },
   total: TOTAL,
-  year: -1,
+  year: 0,
   changes: 0,
   totalCommissions: 0,
   yearHistory: [],
   timer: null,
   timeLeft: TIMER_SEC,
-  phase: "alloc",
-  touchedThisYear: false
+  touchedThisYear: false,
+  isPractice: true
 };
 
 // ===== DOM HELPERS =====
@@ -27,25 +27,43 @@ function show(id) {
   show("scrIntro");
 })();
 
-// ===== START =====
+// ===== START (מתחילות עם שנת ניסיון) =====
 function startGame() {
   S = {
     alloc: { bond: 25, cloud: 25, medi: 25, shield: 25 },
     prevAlloc: null,
     portfolio: { bond: 25000, cloud: 25000, medi: 25000, shield: 25000 },
     total: TOTAL,
-    year: -1,
+    year: 0,
     changes: 0,
     totalCommissions: 0,
     yearHistory: [],
     timer: null,
     timeLeft: TIMER_SEC,
-    phase: "alloc",
     touchedThisYear: false,
-    isPractice: true  // מתחילות בניסיון
+    isPractice: true
   };
-
   show("scrGame");
+  document.getElementById("gBal").textContent = fmt(S.total);
+  showAllocScreen();
+}
+
+// ===== START REAL GAME AFTER PRACTICE =====
+function startRealGame() {
+  S = {
+    alloc: { bond: 25, cloud: 25, medi: 25, shield: 25 },
+    prevAlloc: null,
+    portfolio: { bond: 25000, cloud: 25000, medi: 25000, shield: 25000 },
+    total: TOTAL,
+    year: 0,
+    changes: 0,
+    totalCommissions: 0,
+    yearHistory: [],
+    timer: null,
+    timeLeft: TIMER_SEC,
+    touchedThisYear: false,
+    isPractice: false
+  };
   document.getElementById("gBal").textContent = fmt(S.total);
   showAllocScreen();
 }
@@ -55,7 +73,6 @@ function startTimer() {
   clearInterval(S.timer);
   S.timeLeft = TIMER_SEC;
   updTimer();
-
   S.timer = setInterval(() => {
     S.timeLeft -= 1;
     updTimer();
@@ -71,10 +88,9 @@ function updTimer() {
   const s = S.timeLeft % 60;
   const tEl = document.getElementById("gTime");
   const bEl = document.getElementById("gBar");
-
+  if (!tEl || !bEl) return;
   tEl.textContent = `${m}:${s.toString().padStart(2, "0")}`;
   bEl.style.width = `${(S.timeLeft / TIMER_SEC) * 100}%`;
-
   const d = S.timeLeft <= 15;
   tEl.classList.toggle("dng", d);
   bEl.classList.toggle("dng", d);
@@ -82,38 +98,23 @@ function updTimer() {
 
 // ===== ALLOCATION SCREEN =====
 function showAllocScreen() {
-  S.phase = "alloc";
   S.touchedThisYear = false;
+  const yr = YEARS[S.year];
 
-  const isIntro = S.year === -1;
-  const yr = isIntro ? null : YEARS[S.year];
-  const isPractice = S.isPractice && !isIntro;
+  const stepText = S.isPractice ? "🎯 שנת ניסיון" : `שנה ${S.year + 1} מתוך 5`;
+  const titleText = S.isPractice ? `🎯 שנת ניסיון — ${yr.year}` : `${yr.icon} ${yr.year}`;
 
-  document.getElementById("gStep").textContent = isIntro ? "בניית התיק" : isPractice ? "🎯 שנת ניסיון" : `שנה ${S.year + 1} מתוך 5`;
-  document.getElementById("gTitle").textContent = isIntro ? `${INTRO.icon} ${INTRO.title}` : isPractice ? "🎯 שנת ניסיון — 2020" : `${yr.icon} ${yr.year}`;
+  document.getElementById("gStep").textContent = stepText;
+  document.getElementById("gTitle").textContent = titleText;
 
-  let html = "";
-
-  if (isIntro) {
-    html += `
-      <div class="evc">
-        <div class="evi">${INTRO.icon}</div>
-        <div class="evt">${INTRO.title}</div>
-        <div class="evd">${INTRO.desc.replace(/\n/g, "<br>")}</div>
-      </div>
-    `;
-  } else {
-    html += `
-      <div class="evc">
-        <div class="evi">${yr.icon}</div>
-        <div class="evt">${yr.title}</div>
-        <div class="evd">${yr.desc.replace(/\n/g, "<br>")}</div>
-      </div>
-    `;
-  }
-
-  html += `<div class="alc">
-    <div class="alc-t">${isIntro ? "📊 החליטי על האלוקציה שלך" : "📊 רוצה לשנות את התיק?"}</div>
+  let html = `
+    <div class="evc">
+      <div class="evi">${yr.icon}</div>
+      <div class="evt">${yr.title}</div>
+      <div class="evd">${yr.desc.replace(/\n/g, "<br>")}</div>
+    </div>
+    <div class="alc">
+      <div class="alc-t">📊 בחרי את האלוקציה שלך</div>
   `;
 
   ASSETS.forEach(a => {
@@ -136,7 +137,7 @@ function showAllocScreen() {
 
   html += `
       <div class="aw" id="allocWarn">⚠️ הסכום חייב להסתכם ל-100%</div>
-      <button class="cbtn" id="allocBtn">${isIntro ? "יאללה, מתחילים! 🚀" : "אישור ➡️"}</button>
+      <button class="cbtn" id="allocBtn">אישור ➡️</button>
     </div>
   `;
 
@@ -168,12 +169,12 @@ function checkTotal() {
   const sum = ASSETS.reduce((s, a) => s + S.alloc[a.key], 0);
   const warn = document.getElementById("allocWarn");
   const btn = document.getElementById("allocBtn");
-
+  if (!warn || !btn) return;
   if (sum !== 100) {
     warn.classList.add("sh2");
     warn.textContent = sum > 100
-      ? `⚠️ חרגת! ${sum}% , צריך להוריד ${sum - 100}%`
-      : `⚠️ חסר! רק ${sum}% , צריך להוסיף עוד ${100 - sum}%`;
+      ? `⚠️ חרגת! ${sum}% — צריך להוריד ${sum - 100}%`
+      : `⚠️ חסר! רק ${sum}% — צריך להוסיף עוד ${100 - sum}%`;
     btn.disabled = true;
   } else {
     warn.classList.remove("sh2");
@@ -184,20 +185,9 @@ function checkTotal() {
 function confirmAlloc() {
   const sum = ASSETS.reduce((s, a) => s + S.alloc[a.key], 0);
   if (sum !== 100) return;
-
   clearInterval(S.timer);
 
-  if (S.year === -1) {
-    S.prevAlloc = { ...S.alloc };
-    ASSETS.forEach(a => {
-      S.portfolio[a.key] = S.total * S.alloc[a.key] / 100;
-    });
-    S.year = 0;
-    applyYear(false, 0, true);
-    return;
-  }
-
-  if (!S.touchedThisYear) {
+  if (!S.touchedThisYear && S.prevAlloc) {
     S.prevAlloc = { ...S.alloc };
     applyYear(false, 0, false);
     return;
@@ -213,7 +203,7 @@ function confirmAlloc() {
     amountMoved = amountMoved / 2;
   }
 
-  const commission = amountMoved > 0 ? Math.round(amountMoved * COMMISSION_RATE) : 0;
+  const commission = (amountMoved > 0 && !S.isPractice) ? Math.round(amountMoved * COMMISSION_RATE) : 0;
   if (commission > 0) {
     S.changes += 1;
     S.totalCommissions += commission;
@@ -236,7 +226,6 @@ function applyYear(changed, commission, doRebalance = true) {
 
   const details = [];
   let newTotal = 0;
-
   ASSETS.forEach(a => {
     const before = S.portfolio[a.key];
     const ret = yr.returns[a.key];
@@ -252,26 +241,18 @@ function applyYear(changed, commission, doRebalance = true) {
   ASSETS.forEach(a => {
     S.alloc[a.key] = S.total > 0 ? Math.round((S.portfolio[a.key] / S.total) * 100) : 25;
   });
-
   const allocSum = ASSETS.reduce((s, a) => s + S.alloc[a.key], 0);
-  if (allocSum !== 100 && S.total > 0) {
-    S.alloc[ASSETS[0].key] += (100 - allocSum);
-  }
+  if (allocSum !== 100) S.alloc[ASSETS[0].key] += (100 - allocSum);
 
-  S.yearHistory.push({
-    year: yr.year,
-    changed,
-    commission,
-    totalBefore: oldTotal,
-    totalAfter: S.total
-  });
+  if (!S.isPractice) {
+    S.yearHistory.push({ year: yr.year, changed, commission, totalBefore: oldTotal, totalAfter: S.total });
+  }
 
   showYearResult(yr, details, oldTotal, commission);
 }
 
 // ===== YEAR RESULT =====
 function showYearResult(yr, details, oldTotal, commission) {
-  S.phase = "result";
   const change = ((S.total - oldTotal) / oldTotal) * 100;
   const isPos = change >= 0;
 
@@ -286,24 +267,27 @@ function showYearResult(yr, details, oldTotal, commission) {
 
   // שנת ניסיון — מסך פשוט
   if (S.isPractice) {
-    let html = `<div class="yrc">
-      <div class="yr-title">סיכום שנת הניסיון</div>
+    document.getElementById("gContent").innerHTML = `<div class="yrc">
+      <div class="yr-title">סיכום שנת הניסיון 🎯</div>
       <div class="yr-ch ${isPos ? "pos" : "neg"}" style="font-size:26px; margin-bottom:6px;">${isPos ? "+" : ""}${change.toFixed(1)}%</div>
-      ${commissionHtml}
-      <div class="yr-ex" style="padding:8px 10px; margin-bottom:8px; text-align:center;">
-        🎉 כל הכבוד! הבנת איך לתפעל את המשחק.<br><br>
-        <strong>עכשיו מתחילות לשחק באמת!</strong>
+      <div class="yr-ex" style="padding:10px 12px; margin-bottom:10px; text-align:center; font-size:14px;">
+        🎉 כל הכבוד! הבנת איך זה עובד.<br><br>
+        עכשיו שהבנת איך לתפעל —<br>
+        <strong>בואי נתחיל לשחק באמת!</strong>
       </div>
-      <div class="yr-bal" style="padding:8px; margin-bottom:8px;">
+      <div class="yr-bal" style="padding:8px; margin-bottom:10px;">
         <div class="yr-bl">שווי תיק הניסיון</div>
         <div class="yr-bv">${fmt(S.total)}</div>
       </div>
-      <button class="nbtn" id="nextBtn">מתחילות! 🚀</button>
+      <button class="nbtn" id="nextBtn">מתחילות לשחק! 🚀</button>
     </div>`;
-    document.getElementById("gContent").innerHTML = html;
     document.getElementById("nextBtn").addEventListener("click", startRealGame);
     return;
   }
+
+  // משחק אמיתי
+  let html = `<div class="yrc">
+    <div class="yr-title">סיכום שנה בתיק ההשקעות שלך</div>
     <div class="yr-ch ${isPos ? "pos" : "neg"}" style="font-size:26px; margin-bottom:6px;">${isPos ? "+" : ""}${change.toFixed(1)}%</div>
     ${commissionHtml}
     <div class="yr-ex" style="padding:8px 10px; margin-bottom:8px;">${yr.lesson.replace(/\n/g, "<br>")}</div>
@@ -336,32 +320,14 @@ function showYearResult(yr, details, oldTotal, commission) {
   document.getElementById("nextBtn").addEventListener("click", nextYear);
 }
 
-// ===== START REAL GAME AFTER PRACTICE =====
-function startRealGame() {
-  S.isPractice = false;
-  S.alloc = { bond: 25, cloud: 25, medi: 25, shield: 25 };
-  S.prevAlloc = null;
-  S.portfolio = { bond: 25000, cloud: 25000, medi: 25000, shield: 25000 };
-  S.total = TOTAL;
-  S.year = -1;
-  S.changes = 0;
-  S.totalCommissions = 0;
-  S.yearHistory = [];
-  S.touchedThisYear = false;
-  document.getElementById("gBal").textContent = fmt(S.total);
-  showAllocScreen();
-}
-
 // ===== NEXT YEAR =====
 function nextYear() {
   const nextIndex = S.year + 1;
-
   if (nextIndex >= 5) {
     S.year = nextIndex;
     showResults();
     return;
   }
-
   S.year = nextIndex;
   document.getElementById("gBal").textContent = fmt(S.total);
   showAllocScreen();
@@ -370,7 +336,6 @@ function nextYear() {
 // ===== RESULTS =====
 function showResults() {
   show("scrResults");
-
   const finalTotal = S.total;
   const totalReturn = ((finalTotal - TOTAL) / TOTAL) * 100;
   const isPos = totalReturn >= 0;
@@ -391,12 +356,12 @@ function showResults() {
       <div class="bonus-text">בשוק האמיתי כל שינוי בתיק עולה כסף — עמלות, מיסים ותזמון מכרסמים בתשואה.</div>
     `;
   } else {
-    bc.style.background = "linear-gradient(135deg,rgba(34,197,94,.1),rgba(34,197,94,.05))";
-    bc.style.borderColor = "rgba(34,197,94,.3)";
+    bc.style.background = "linear-gradient(135deg,rgba(109,40,217,.08),rgba(192,38,211,.05))";
+    bc.style.borderColor = "rgba(109,40,217,.3)";
     bc.innerHTML = `
-      <div class="bonus-title" style="color:var(--green)">🎯 אפס עמלות!</div>
+      <div class="bonus-title" style="color:var(--primary)">🎯 אפס עמלות!</div>
       <div class="bonus-text">לא שינית את התיק בכלל — חסכת את כל העמלות.</div>
-      <div class="bonus-text">סבלנות והתמדה יכולות לעזור לאורך זמן.</div>
+      <div class="bonus-text">סבלנות והתמדה עוזרים לאורך זמן.</div>
     `;
   }
 
@@ -412,30 +377,14 @@ function showResults() {
       </span>
     </div>`;
   });
-
-  dhtml += `<div class="det-r" style="border-color:var(--gold)">
+  dhtml += `<div class="det-r" style="border-color:var(--primary)">
     <span style="font-weight:700">💰 סה"כ סופי</span>
-    <span style="font-family:'Rubik',sans-serif; font-weight:900; color:var(--gold)">${fmt(finalTotal)}</span>
+    <span style="font-family:'Rubik',sans-serif; font-weight:900; color:var(--primary)">${fmt(finalTotal)}</span>
   </div>`;
-
   document.getElementById("rDetails").innerHTML = dhtml;
 }
 
 // ===== RESTART =====
 function restart() {
-  S = {
-    alloc: { bond: 25, cloud: 25, medi: 25, shield: 25 },
-    prevAlloc: null,
-    portfolio: { bond: 25000, cloud: 25000, medi: 25000, shield: 25000 },
-    total: TOTAL,
-    year: -1,
-    changes: 0,
-    totalCommissions: 0,
-    yearHistory: [],
-    timer: null,
-    timeLeft: TIMER_SEC,
-    phase: "alloc",
-    touchedThisYear: false
-  };
   show("scrIntro");
 }
