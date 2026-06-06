@@ -61,7 +61,7 @@ body {
 }
 
 .wt-divider { color: var(--accent); font-size: 13px; letter-spacing: 4px; margin: 4px 0; }
-.wst { color: var(--txt2); font-size: 13px; line-height: 1.6; }
+.wst { color: var(--txt2); font-size: 15px; line-height: 1.7; }
 
 .brand-footer { font-size: 11px; color: var(--txt3); text-align: center; margin-top: 4px; }
 .brand-footer span { color: var(--primary); font-weight: 700; }
@@ -107,7 +107,7 @@ body {
 }
 .evi { font-size: 22px; margin-bottom: 4px; }
 .evt { font-family: 'Rubik', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 4px; line-height: 1.3; color: var(--primary); }
-.evd { font-size: 13px; color: var(--txt2); line-height: 1.6; }
+.evd { font-size: 15px; color: var(--txt2); line-height: 1.7; }
 
 .alc {
   background: var(--card); border-radius: 14px; padding: 8px 12px;
@@ -162,7 +162,7 @@ input[type=range]::-moz-range-thumb {
 .yr-ex {
   background: var(--card2); border: 1px solid var(--brd);
   border-radius: 10px; padding: 10px 12px;
-  font-size: 13px; color: var(--txt2); line-height: 1.7; margin-bottom: 10px;
+  font-size: 15px; color: var(--txt2); line-height: 1.7; margin-bottom: 10px;
 }
 
 .yr-bd { margin-bottom: 10px; }
@@ -223,7 +223,7 @@ input[type=range]::-moz-range-thumb {
 .rbtn:hover { background: var(--card2); }
 
 .disclaimer {
-  font-size: 11px; color: var(--txt3); text-align: center; line-height: 1.6;
+  font-size: 13px; color: var(--txt3); text-align: center; line-height: 1.6;
   padding: 10px 14px; border: 1px solid var(--brd); border-radius: 10px; background: var(--card);
 }
 
