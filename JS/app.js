@@ -274,7 +274,7 @@ function showYearResult(yr, details, oldTotal, commission) {
         <div class="yr-bl">שווי תיק הניסיון</div>
         <div class="yr-bv">${fmt(S.total)}</div>
       </div>
-      <button class="nbtn" id="nextBtn">מתחילות לשחק! 🚀</button>
+      <button class="nbtn" id="nextBtn">יאללה מתחילות לשחק! 🚀</button>
     </div>`;
     document.getElementById("nextBtn").addEventListener("click", startRealGame);
     return;
