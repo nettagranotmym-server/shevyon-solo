@@ -102,19 +102,15 @@ function showAllocScreen() {
   const yr = YEARS[S.year];
 
   const stepText = S.isPractice ? "🎯 שנת ניסיון" : `שנה ${S.year + 1} מתוך 5`;
-  const titleText = S.isPractice ? `🎯 שנת ניסיון — ${yr.year}` : `${yr.icon} ${yr.year}`;
+  const titleText = S.isPractice
+    ? `🎯 שנת ניסיון — ${yr.year}`
+    : `${yr.icon} ${yr.year} — ${yr.title.split("—")[1]?.trim() || yr.title}`;
 
   document.getElementById("gStep").textContent = stepText;
   document.getElementById("gTitle").textContent = titleText;
 
-  let html = `
-    <div class="evc">
-      <div class="evi">${yr.icon}</div>
-      <div class="evt">${yr.title}</div>
-      <div class="evd">${yr.desc.replace(/\n/g, "<br>")}</div>
-    </div>
-    <div class="alc">
-      <div class="alc-t">📊 בחרי את האלוקציה שלך</div>
+  let html = `<div class="alc">
+    <div class="alc-t">📊 חלקי את הכסף בין הנכסים (סה"כ 100%)</div>
   `;
 
   ASSETS.forEach(a => {
@@ -123,7 +119,7 @@ function showAllocScreen() {
         <div class="sh">
           <div class="sl">
             <span class="sli" style="background:${a.bg};color:${a.color}">${a.icon}</span>
-            ${a.name} <span style="font-size:10px; color:var(--txt3); font-weight:400;">(${a.sector})</span>
+            <span>${a.name} <span style="font-size:10px;color:var(--txt3);">(${a.sector})</span></span>
           </div>
           <div>
             <span class="sv" id="pct_${a.key}">${S.alloc[a.key]}%</span>
@@ -136,10 +132,9 @@ function showAllocScreen() {
   });
 
   html += `
-      <div class="aw" id="allocWarn">⚠️ הסכום חייב להסתכם ל-100%</div>
-      <button class="cbtn" id="allocBtn">אישור ➡️</button>
-    </div>
-  `;
+    <div class="aw" id="allocWarn">⚠️ הסכום חייב להסתכם ל-100%</div>
+    <button class="cbtn" id="allocBtn">אישור ➡️</button>
+  </div>`;
 
   document.getElementById("gContent").innerHTML = html;
 
