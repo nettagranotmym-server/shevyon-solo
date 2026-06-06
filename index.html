@@ -73,47 +73,43 @@
         <div class="fr" id="rReturn"></div>
       </div>
 
-      <div class="bonus-card" id="bonusCard"></div>
-      <div class="det" id="rDetails"></div>
-
-      <div class="cta2">
-        <p>סבלנות ופיזור יכולים לעשות הבדל גדול לאורך זמן.</p>
-        <div style="background:var(--card); border:1px solid var(--brd); border-radius:14px; padding:16px; margin-bottom:14px; text-align:right; line-height:1.8; font-size:14px; color:var(--txt2);">
-          במשחק הסימולציה הזה יכולת להיזכר מה קרה באותה שנה ובהתאם לשפר את ביצועי תיק ההשקעות.<br><br>
-          בעולם האמיתי אף פעם לא ניתן לדעת מה יקרה — ואי אפשר לתזמן את השוק.<br><br>
-          ולכן בסיס הידע שיאפשר לך להשקיע באופן מושכל הוא <strong style="color:var(--primary);">לימודי שוק ההון.</strong>
+      <div style="text-align:center; padding:20px 8px;">
+        <div style="font-family:'Rubik',sans-serif; font-size:20px; font-weight:700; color:var(--primary); line-height:1.6;">
+          סבלנות ופיזור יכולים לעשות הבדל גדול לאורך זמן.
         </div>
-        <button class="sbtn en" onclick="show('scrMarketing')" style="font-size:15px;">רוצה לדעת עוד? 🐉</button>
       </div>
+
+      <button class="sbtn en" onclick="show('scrMarketing')" style="font-size:16px;">
+        רוצה לדעת עוד? 🐉
+      </button>
     </div>
 
     <!-- MARKETING -->
     <div class="sc ws" id="scrMarketing">
       <div style="text-align:center; animation:fiu .5s ease-out;">
         <div class="logo">🐉</div>
-        <div class="wt">נהנית?</div>
+        <div class="wt">רגע לפני שאת הולכת...</div>
         <div class="wt-divider">— ✦ —</div>
       </div>
 
-      <div class="evc" style="text-align:center;">
-        <div class="evt">רוצה ללמוד עוד על שוק ההון?</div>
-        <div class="evd">
-          אם תרצי ללמוד עוד על שוק ההון בצורה פרקטית ומעניינת,<br>
-          את מוזמנת לפנות אלינו ב-SHEvyon!<br><br>
-          קורסים, הרצאות וכלים להבנת עולם ההשקעות.
-        </div>
-        <div style="margin-top:16px;">
-          <a href="https://www.shevyon.com/invest-at-work" target="_blank" style="text-decoration:none;">
-            <button class="sbtn en" style="font-size:15px; padding:14px 20px;">
-              🐉 ללמוד עוד על שוק ההון
-            </button>
-          </a>
-          <div style="font-size:11px; color:var(--txt3); margin-top:8px;">shevyon.com/invest-at-work</div>
-        </div>
+      <div class="evc" style="text-align:right;">
+        <div class="evd" style="font-size:16px; line-height:1.9; color:var(--txt);">
+          במשחק הסימולציה הזה יכולת <strong>להיזכר מה קרה</strong> באותה שנה ובהתאם לשפר את ביצועי תיק ההשקעות.<br><br>
+          בעולם האמיתי אף פעם לא ניתן לדעת מה יקרה — ואי אפשר לתזמן את השוק.<br><br>
+          ולכן בסיס הידע שיאפשר לך להשקיע באופן מושכל הוא <strong style="color:var(--primary);">לימודי שוק ההון.</strong>
         </div>
       </div>
 
-      <button class="sbtn en" onclick="restart()">שחקי שוב 🔄</button>
+      <a href="https://www.shevyon.com/invest-at-work" target="_blank" style="text-decoration:none; width:100%;">
+        <button class="sbtn en" style="font-size:15px;">
+          עוד על מועדוני המשקיעות של SHEvyon 🐉
+        </button>
+      </a>
+
+      <button onclick="restart()" style="background:none; border:none; color:var(--txt3); font-size:13px; cursor:pointer; margin-top:8px; font-family:'Heebo',sans-serif;">
+        שחקי שוב 🔄
+      </button>
+
       <div class="brand-footer">אפליקציה מבית <span>SHEvyon</span></div>
     </div>
 
