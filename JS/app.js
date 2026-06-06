@@ -340,28 +340,7 @@ function showResults() {
   rr.textContent = `${isPos ? "+" : ""}${totalReturn.toFixed(0)}% תשואה כוללת`;
   rr.className = `fr ${isPos ? "pos" : "neg"}`;
 
-  // עמלות
-  const bc = document.getElementById("bonusCard");
-  if (bc) {
-    if (S.totalCommissions > 0) {
-      bc.style.background = "linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.05))";
-      bc.style.borderColor = "rgba(239,68,68,.3)";
-      bc.innerHTML = `
-        <div class="bonus-title" style="color:var(--red)">💸 עמלות ששילמת</div>
-        <div class="bonus-text">שינית את התיק ${S.changes} פעמים.</div>
-        <div class="bonus-val" style="color:var(--red)">-${fmt(S.totalCommissions)}</div>
-      `;
-    } else {
-      bc.style.background = "linear-gradient(135deg,rgba(109,40,217,.08),rgba(192,38,211,.05))";
-      bc.style.borderColor = "rgba(109,40,217,.3)";
-      bc.innerHTML = `
-        <div class="bonus-title" style="color:var(--primary)">🎯 אפס עמלות!</div>
-        <div class="bonus-text">לא שינית את התיק — חסכת את כל העמלות.</div>
-      `;
-    }
-  }
-
-  // סיכום שנה אחר שנה
+  // סיכום שנה אחר שנה + עמלות בשורה אחת
   const rd = document.getElementById("rDetails");
   if (rd) {
     let dhtml = `<div class="det-t">ביצועים לפי שנה:</div>`;
@@ -376,9 +355,18 @@ function showResults() {
         </span>
       </div>`;
     });
+    if (S.totalCommissions > 0) {
+      dhtml += `<div class="det-r" style="color:var(--red);">
+        <span>💸 סה"כ עמלות (${S.changes} שינויים)</span>
+        <span style="font-family:'Rubik',sans-serif; font-weight:700;">-${fmt(S.totalCommissions)}</span>
+      </div>`;
+    }
     dhtml += `<div class="det-r" style="border-color:var(--primary); margin-top:4px;">
       <span style="font-weight:700">💰 סה"כ סופי</span>
       <span style="font-family:'Rubik',sans-serif; font-weight:900; color:var(--primary)">${fmt(finalTotal)}</span>
+    </div>`;
+    dhtml += `<div style="text-align:center; padding:10px 4px 4px; font-family:'Rubik',sans-serif; font-size:16px; font-weight:700; color:var(--primary); line-height:1.6;">
+      סבלנות ופיזור יכולים לעשות הבדל גדול לאורך זמן.
     </div>`;
     rd.innerHTML = dhtml;
   }
